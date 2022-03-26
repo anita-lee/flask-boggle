@@ -36,16 +36,10 @@ class BoggleAppTestCase(TestCase):
             response = client.post('/api/new-game')
             data = response.get_json()
 
-            self.assertIsInstance(data, dict)
             self.assertIsInstance(data["board"], list)
             self.assertIsInstance(data["gameId"], str)
-            # add check gameId in games dictionary
+            self.assertIn(data["gameId"], games)
 
-            # write a test for this route
-
-    #to check if word is valid, need word and game_id
-    #make post request -> post("/api/new-game")
-    #take the response and change game.board (hard code it)
 
     def test_api_score_word(self):
         """Test if word is valid, invalid, not-on-board"""
@@ -64,20 +58,15 @@ class BoggleAppTestCase(TestCase):
                 ['L','Z','Z','Z','Z'],
                 ['E','Z','Z','Z','Z']]
 
-            breakpoint()
-            response = client.post('/api/score-word', json={'gameId': gameId, 'word': 'APPLE'})
-            breakpoint()
+
+            response = client.post('/api/score-word', json={'game_id': gameId, 'word': 'APPLE'})
             json_response = response.get_json()
-            breakpoint()
             self.assertEqual({'result': 'ok'}, json_response)
-            breakpoint()
 
             response = client.post('/api/score-word', json={'game_id': gameId, 'word': 'ZZZZZZZ'})
             json_response = response.get_json()
             self.assertEqual({'result': 'not-word'}, json_response)
-            breakpoint()
 
             response = client.post('/api/score-word', json={'game_id': gameId, 'word': 'HELLO'})
             json_response = response.get_json()
             self.assertEqual({'result': 'not-on-board'}, json_response)
-            breakpoint()
